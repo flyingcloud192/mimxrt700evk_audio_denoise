@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<BuildTarget tool="xtensa" version="1.0">
+  <BuildSettings>
+    <BaseSettings path="project">
+      <PreprocessorOptions>
+        <StringListMapOptions>
+          <StringListMapEntry>
+            <key>Includes</key>
+            <value flag="-I" inheritance="donotinherit">
+              <ListEntry>${xt_project_loc}/devices/RT/RT700/MIMXRT798S/drivers</ListEntry>
+              <ListEntry>${xt_project_loc}/devices/RT/RT700/periph</ListEntry>
+              <ListEntry>${xt_project_loc}/devices/RT/RT700/MIMXRT798S</ListEntry>
+              <ListEntry>${xt_project_loc}/examples/_boards/mimxrt700evk</ListEntry>
+              <ListEntry>${xt_project_loc}/examples/_boards/mimxrt700evk/eiq_examples/tflm_cifar10_hifi4_neutron/hifi4</ListEntry>
+              <ListEntry>${xt_project_loc}/drivers/common</ListEntry>
+              <ListEntry>${xt_project_loc}/drivers/gpio</ListEntry>
+              <ListEntry>${xt_project_loc}/drivers/lpflexcomm</ListEntry>
+              <ListEntry>${xt_project_loc}/drivers/lpflexcomm/lpuart</ListEntry>
+              <ListEntry>${xt_project_loc}/components/assert</ListEntry>
+              <ListEntry>${xt_project_loc}/components/debug_console_lite</ListEntry>
+              <ListEntry>${xt_project_loc}/components/str</ListEntry>
+              <ListEntry>${xt_project_loc}/components/uart</ListEntry>
+              <ListEntry>${xt_project_loc}/middleware/eiq/neutron/common/include</ListEntry>
+              <ListEntry>${xt_project_loc}/middleware/eiq/neutron/driver/include</ListEntry>
+              <ListEntry>${xt_project_loc}/middleware/eiq/tensorflow-lite</ListEntry>
+              <ListEntry>${xt_project_loc}/middleware/eiq/tensorflow-lite/third_party/flatbuffers/include</ListEntry>
+              <ListEntry>${xt_project_loc}/middleware/eiq/tensorflow-lite/third_party/gemmlowp</ListEntry>
+              <ListEntry>${xt_project_loc}/middleware/eiq/tensorflow-lite/third_party/kissfft</ListEntry>
+              <ListEntry>${xt_project_loc}/middleware/eiq/tensorflow-lite/third_party/ruy</ListEntry>
+              <ListEntry>${xt_project_loc}/middleware/eiq/tensorflow-lite/third_party/cmsis_nn</ListEntry>
+              <ListEntry>${xt_project_loc}/middleware/eiq/tensorflow-lite/third_party/cmsis_nn/Include</ListEntry>
+              <ListEntry>${xt_project_loc}/examples/eiq_examples/tflm_cifar10_hifi4_neutron/hifi4</ListEntry>
+              <ListEntry>${xt_project_loc}/examples/eiq_examples/common</ListEntry>
+              <ListEntry>${xt_project_loc}/examples/eiq_examples/common/image</ListEntry>
+              <ListEntry>${xt_project_loc}/examples/eiq_examples/common/tflm/model</ListEntry>
+            </value>
+          </StringListMapEntry>
+        </StringListMapOptions>
+        <KeyValueListMapOptions>
+          <KeyValueListMapEntry>
+            <key>Defines</key>
+            <value flag="-D">
+              <ListEntry key="CPU_MIMXRT798SGFOB_hifi4" value=""/>
+              <ListEntry key="DEBUG" value=""/>
+              <ListEntry key="MCUX_META_BUILD" value=""/>
+              <ListEntry key="MCUXPRESSO_SDK" value=""/>
+              <ListEntry key="SDK_DEBUGCONSOLE" value="1"/>
+              <ListEntry key="TF_LITE_STATIC_MEMORY" value=""/>
+              <ListEntry key="KERNELS_OPTIMIZED_FOR_SPEED" value=""/>
+              <ListEntry key="TENSORARENA_NONCACHE" value="1"/>
+            </value>
+          </KeyValueListMapEntry>
+        </KeyValueListMapOptions>
+      </PreprocessorOptions>
+      <CompilerOptions>
+        <StringListMapOptions>
+          <StringListMapEntry>
+            <key>CompilerAdditionalOptions</key>
+            <value flag="" inheritance="append">
+                        <ListEntry>-include&#13;
+${xt_project_loc}/mcux_config.h&#13;
+-include&#13;
+${xt_project_loc}/mcuxsdk_version.h&#13;
+--xtensa-core=rt700_hifi4_RI23_11_nlib&#13;
+--xtensa-system=C:/usr/xtensa/XtDevTools/install/tools/RI-2023.11-win32/XtensaTools/config&#13;
+-Wno-unused&#13;
+-Wno-missing-braces&#13;
+-fmessage-length=0</ListEntry></value>
+          </StringListMapEntry>
+        </StringListMapOptions>
+        <FlagValueMapOptions>
+          <FlagValueMapEntry>
+            <key>Optimization</key>
+            <value use="true" level="0" flag="-O"/>
+          </FlagValueMapEntry>
+          <FlagValueMapEntry>
+            <key>Debug</key>
+            <value use="true" level="-3" flag="-g"/>
+          </FlagValueMapEntry>
+        </FlagValueMapOptions>
+        <SingleFlagMapOptions>
+          <SingleFlagMapEntry>
+            <key>CompilerEnableLongCall</key>
+            <value use="true" flag="-mlongcalls"/>
+          </SingleFlagMapEntry>
+          <SingleFlagMapEntry>
+            <key>WarningSetting</key>
+            <value use="true" flag="-Wall"/>
+          </SingleFlagMapEntry>
+          <SingleFlagMapEntry>
+            <key>SignCharType</key>
+            <value use="true" flag="-fsigned-char"/>
+          </SingleFlagMapEntry>
+          <SingleFlagMapEntry>
+            <key>ISOStandard</key>
+            <value use="true" flag="-std=c99"/>
+          </SingleFlagMapEntry>
+          <SingleFlagMapEntry>
+            <key>UseNewCPlusPlusLib</key>
+            <value use="true" flag="-stdlib=libc++"/>
+          </SingleFlagMapEntry>
+        </SingleFlagMapOptions>
+      </CompilerOptions>
+      <AssemblerOptions/>
+      <LinkerOptions>
+        <LinkerSupport custom="true" key="-mlsp" value="C:/yhc/repo/sdk-next/mcuxsdk/examples/_boards/mimxrt700evk/eiq_examples/tflm_cifar10_hifi4_neutron/linker/hifi4/gdbio"/>
+        <StringListMapOptions>
+          <StringListMapEntry>
+            <key>Libraries</key>
+            <value inheritance="prepend" flag="-l">
+              <ListEntry>xos</ListEntry>
+            </value>
+          </StringListMapEntry>
+          <StringListMapEntry>
+            <key>LinkerAdditionalOptions</key>
+            <value inheritance="append">
+              <ListEntry>--xtensa-core=rt700_hifi4_RI23_11_nlib&#13;
+--xtensa-system=C:/usr/xtensa/XtDevTools/install/tools/RI-2023.11-win32/XtensaTools/config&#13;
+-Wl,--orphan-handling=place&#13;
+-Wl,--start-group&#13;
+${xt_project_loc}/middleware/eiq/neutron/rt700/hifi4/libNeutronDriver.a&#13;
+${xt_project_loc}/middleware/eiq/neutron/rt700/hifi4/libNeutronFirmware.a&#13;
+${xt_project_loc}/middleware/eiq/tensorflow-lite/lib/hifi4/xcc/rt798s/libtflm.a&#13;
+-Wl,--end-group&#13;
+</ListEntry>
+            </value>
+          </StringListMapEntry>
+        </StringListMapOptions>
+      </LinkerOptions>
+    </BaseSettings>
+  </BuildSettings>
+</BuildTarget>

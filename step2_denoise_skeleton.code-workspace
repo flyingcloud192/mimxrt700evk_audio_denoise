@@ -1,0 +1,72 @@
+{
+  "folders": [
+    {
+      "name": "Denoise step2 (CM33, armgcc)",
+      "path": "cm33_armgcc"
+    },
+    {
+      "name": "Denoise step2 (HiFi4 DSP+NPU, xtensa)",
+      "path": "hifi4_xtensa"
+    }
+  ],
+  "settings": {
+    "C_Cpp.intelliSenseEngine": "disabled",
+    "clangd.arguments": [
+      "--background-index",
+      "--query-driver=C:/Program Files (x86)/Arm GNU Toolchain arm-none-eabi/14.2 rel1/bin/arm-none-eabi-*",
+      "--query-driver=C:/usr/xtensa/XtDevTools/install/tools/RI-2023.11-win32/XtensaTools/bin/xt-*",
+      "--header-insertion=never",
+      "--completion-style=detailed",
+      "--pch-storage=memory",
+      "-j=8"
+    ],
+
+    "files.exclude": {
+      "**/.cache": true,
+      "**/.ninja_deps": true,
+      "**/.ninja_log": true,
+      "**/CMakeCache.txt": true,
+      "**/CMakeFiles": true,
+      "**/build.ninja": true,
+      "**/cmake_install.cmake": true,
+      "**/*.o": true,
+      "**/*.obj": true,
+      "**/*.stack_usage": true,
+      "**/*.map": true,
+      "**/*.elf": true,
+      "**/*.hex": true,
+      "compile_commands.json": true,
+      "build_log.txt": true,
+      "cmake_cfg.log": true,
+      "output.map": true,
+      "mcux_config.h": true,
+      "mcuxsdk_version.h": true,
+
+      "arch": true,
+      "cmake": true,
+      "components": true,
+      "devices": true,
+      "drivers": true
+    },
+
+    "search.exclude": {
+      "**/.cache": true,
+      "**/CMakeFiles": true,
+      "**/*.o": true,
+      "**/*.obj": true,
+      "**/*.a": true,
+      "**/*.map": true,
+      "**/*.elf": true,
+      "compile_commands.json": true,
+      "build_log.txt": true
+    },
+
+    "files.watcherExclude": {
+      "**/.cache/**": true,
+      "**/CMakeFiles/**": true,
+      "**/.ninja_deps": true,
+      "**/.ninja_log": true,
+      "**/build.ninja": true
+    }
+  }
+}

@@ -1,0 +1,12 @@
+# clangd config for Xtensa HiFi (Xplorer project)
+# HiFi4 TFLM/Neutron DSP side
+# Navigation/indexing only - the real Xtensa build is done by Xplorer/xt-clang.
+# A local compile_commands.json in this folder supplies the actual flags and,
+# crucially, stops clangd from inheriting the wrong (ARM/cortex-m85) database
+# from the parent sdk-next tree.
+Diagnostics:
+  Suppress:
+    - implicit_function_decl   # memcpy/__NOP etc. under -ffreestanding
+    - -Wimplicit-function-declaration
+    - drv_unsupported_opt_for_target
+    - pp_hash_error
