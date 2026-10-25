@@ -13,7 +13,7 @@
     "C_Cpp.intelliSenseEngine": "disabled",
     "clangd.arguments": [
       "--background-index",
-      "--query-driver=C:/Program Files (x86)/Arm GNU Toolchain arm-none-eabi/14.2 rel1/bin/arm-none-eabi-*",
+      "--query-driver=C:/Users/flyingbird/.mcuxpressotools/arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-arm-none-eabi/bin/arm-none-eabi-*",
       "--query-driver=C:/usr/xtensa/XtDevTools/install/tools/RI-2023.11-win32/XtensaTools/bin/xt-*",
       "--header-insertion=never",
       "--completion-style=detailed",

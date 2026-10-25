@@ -142,6 +142,50 @@ mimxrt700evk_audio_denoise/            ← git 仓库根（独立仓）
 
 > 按时间倒序记录（新的在前）。每条包含：日期、做了什么、结果、遇到的问题与解法。
 
+### [2025-10-25] 修复新机器上 VSCode/clangd 无法代码跳转
+
+**现象**：项目用 VSCode + clangd 插件编辑 C 代码，在原机器上 `F12`/Ctrl+点击可正常跳转，
+但 clone 到新机器（`D:\AI\mimxrt700evk_audio_denoise`）后**完全无法跳转**。
+
+**根因（两个叠加）**：
+1. **`compile_commands.json` 缺失（主因）**：clangd 跳转依赖编译数据库告诉它每个文件的
+   头文件路径与宏定义。该文件在 `.gitignore` 里（不随仓走），且 cmake 默认不生成 →
+   新机器上一个 `compile_commands.json` 都没有，clangd 建不起索引。
+2. **工具链路径写死成原机器（次因）**：workspace 与 `cm33_armgcc/.clangd` 里的 ARM GCC
+   路径是原机器的 `C:/Program Files (x86)/.../14.2 rel1`，而新机器 ARM GCC 在
+   `C:/Users/flyingbird/.mcuxpressotools/arm-gnu-toolchain-13.2.Rel1-...`（13.2.1），
+   原路径在新机器上不存在。
+
+**解法**：
+1. 重新配置 cmake 时加 `-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`，生成
+   `cm33_armgcc/compile_commands.json`（34 个编译单元齐全，编译器路径正确指向本机 13.2）。
+2. `cm33_armgcc/.clangd`：三条 `-isystem` 头文件路径从 14.2 改为本机 13.2 的
+   `lib/gcc/arm-none-eabi/13.2.1/{include,include-fixed}` + `arm-none-eabi/include`
+   （三个目录都验证过存在）。
+3. `step2_denoise_skeleton.code-workspace` 的 `--query-driver` 第一条 ARM GCC glob
+   同步改为本机路径。
+
+**验证**：用本机 clangd 对核心源文件做 `--check`：
+`clangd --check=.../cm/main_cm33.c --query-driver=<本机ARM_GCC>` →
+**"All checks completed, 0 errors"**，编译数据库被正确加载，索引可建立。
+
+**如何让修复生效（用户操作）**：VSCode 里 `Ctrl+Shift+P` → `clangd: Restart language server`，
+等后台索引（`--background-index`）建完即可跳转。
+
+**遗留局限**：
+- **HiFi4（xtensa）侧跳转暂不可用**：本机无 Xtensa 工具链，且 `hifi4_xtensa/` 本无
+  `compile_commands.json`（它原是 Xplorer 工程，原机器是手工生成的本地 cdb）。等装了
+  Xtensa 或需要 DSP 侧跳转时再生成那份 cdb。
+- 本机 PATH 上的 clangd 是 WitmemStudio 自带的 14.0.3（较旧）。VSCode clangd 扩展（0.6.0）
+  可提示下载官方较新版本，建议接受；不过 14.0.3 实测 `--check` 也是 0 errors，不下载也能用。
+
+**经验（供其他机器/协作者参考）**：clone 本仓后若 clangd 不能跳转，**先检查有没有
+`compile_commands.json`**——这是最常见的遗漏。生成方法见 §2.3（cmake 加
+`-DCMAKE_EXPORT_COMPILE_COMMANDS=ON`），并确认 `.clangd`/workspace 里的工具链路径
+与本机实际安装位置一致。
+
+---
+
 ### [2025-10-25] step2 骨架在新机器上完成 CM33 编译验证
 
 **做了什么**：把项目 clone 到一台新机器（Windows，路径 `D:\AI\mimxrt700evk_audio_denoise`），
@@ -300,6 +344,7 @@ CM33 侧工程文件为 NXP SDK 原生，未做修改。构建系统靠 `ARMGCC_
 | FFT 结果错乱/崩溃 | 输入被破坏 | NatureDSP FFT in-place，x/y 8 字节对齐不重叠 |
 | c99 下 `M_PI` 未定义 | 编译错 | `stft.c` 已自带 `#ifndef M_PI` 兜底 |
 | `XCC_DIR` 带 `/bin` | cmake 找不到工具 | 指向 `XtensaTools` 本身，cmake 自己接 `/bin` |
+| clangd 无法跳转（新机器） | F12/Ctrl+点击无反应 | ①缺 `compile_commands.json`（在 .gitignore 不随仓走，cmake 加 `-DCMAKE_EXPORT_COMPILE_COMMANDS=ON` 生成）②`.clangd`/workspace 里工具链路径写死成别的机器，改成本机实际路径 |
 
 ---
 
