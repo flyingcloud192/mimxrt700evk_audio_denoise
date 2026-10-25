@@ -142,6 +142,49 @@ mimxrt700evk_audio_denoise/            ← git 仓库根（独立仓）
 
 > 按时间倒序记录（新的在前）。每条包含：日期、做了什么、结果、遇到的问题与解法。
 
+### [2026-10-25] step3 选型：开源 MCU 端侧降噪模型调研（GTCRN 为首选）
+
+**做了什么**：为 step3"真降噪模型"做选型调研（GitHub REST API / Gitee 实测：GitHub API 与
+raw 可用、网页版不可达；Gitee 仅有 rnnoise / deepfilternet 官方镜像，其余无）。
+候选：GTCRN / RNNoise / DTLN / Ambiq NNSE / NSNet2 / DeepFilterNet / UL-UNAS 等。
+
+**结论（推荐 GTCRN，理由如下）**：
+
+| 模型 | 仓库 | ★ | 参数量 | 算量 | 许可证 | MCU/int8 先例 |
+|------|------|---|--------|------|--------|---------------|
+| **GTCRN**(ICASSP'24) | github.com/Xiaobin-Rong/gtcrn | ~760 | **48.2K** | **33 MMAC/s** | MIT | sherpa-onnx 流式集成；无官方 int8 |
+| RNNoise | github.com/xiph/rnnoise | ~5.9k | ~60K | ~40 MMAC/s | BSD-3 | 多（NNSE 即其衍生） |
+| DTLN(Interspeech'20) | github.com/breizhn/DTLN | ~750 | <1M | 较高 | MIT | 官方自带量化 tflite |
+| Ambiq NNSE | github.com/AmbiqAI/nnse | 44 | ~100KB 模型 | — | BSD-3 | TFLM int8 @ Cortex-M4 无 NPU |
+| DeepFilterNet | github.com/Rikorose/DeepFilterNet | ~4.9k | 1.8M | 350 MMAC/s | MIT/Apache | 非 int8/TFLM，移植重 |
+
+- **GTCRN 最匹配 Neutron-C**：参数量/算量比其余小 1~2 个数量级，纯 mask 预测，
+  结构 = Conv2d encoder + ERB 固定矩阵映射 + DPGRNN(GRU) + decoder，矩阵乘友好；
+  有训练代码与流式实现，二开基础好。代价：需自行 int8 量化（建议 QAT）+ 按本项目
+  256/128 STFT 参数重训对齐。
+- RNNoise 注意点：**不是 per-bin mask**（输出 22 个 Bark 带增益 + VAD），48kHz/帧 960，
+  与本管线差异最大，作备选/参照。
+- DTLN 是"今天就有量化 tflite"的捷径，但 512 单元 LSTM×4 偏重。
+- Ambiq NNSE 是"TFLM int8 全流程上 MCU"的现成模板，其 训练→int8→TFLM C 库 流程与
+  本项目 step3 路线一一对应，值得照抄流程（不必照抄模型）。
+
+**本地核查的两个关键事实**（决定 step3 工程方案）：
+1. **整图单算子转换**：`model_cifarnet_ops_npu.cpp` 显示当前模型被 neutron-converter
+   整图转成一个 `NEUTRON_GRAPH` 自定义算子（resolver 只注册 `AddDequantize` + `AddCustom`）。
+   → 新模型里**任何不被 Neutron 支持的算子都会导致整图转换失败**，GRU/LSTM 能否上 NPU
+   必须先用 neutron-converter 实测。
+2. **HiFi4 兜底可用**：`strings libtflm.a` 确认内含完整
+   `UnidirectionalSequenceLstmEval/Prepare`（含 int8/int16 路径）及 HiFi4 优化符号
+   `xa_nn_lstm_cell_state_update_16`。→ 若 GRU/LSTM 不能上 NPU，可把模型**拆两段**：
+   Conv/FC 部分转 NPU，RNN 部分在 HiFi4 跑 TFLM 原生 kernel（HiFi4 SIMD 扛几十 K MAC/帧
+   没问题，但需计入时延预算）。GTCRN 的 GRU 是逐 cell 的少量 matmul+sigmoid/tanh，
+   也可改写成纯 FC 序列便于整图上 NPU。
+
+**下一步**：拉取 GTCRN 仓库 → 按 16kHz/帧长256/hop128 改训练配置 → 重训 → PTQ/QAT 量化
+int8 → neutron-converter 转换实测（重点验证 GRU 展开算子支持度）→ 替换 `model_data.h`。
+
+---
+
 ### [2025-10-25] 修复新机器上 VSCode/clangd 无法代码跳转
 
 **现象**：项目用 VSCode + clangd 插件编辑 C 代码，在原机器上 `F12`/Ctrl+点击可正常跳转，
