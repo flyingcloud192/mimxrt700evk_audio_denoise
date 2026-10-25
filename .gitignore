@@ -26,6 +26,9 @@ cmake_cfg.log
 *.map
 *.stack_usage
 output.map
+cm33_armgcc/tflm_cifar10_hifi4_neutron_cm33_core0.bin
+cm33_armgcc/tflm_cifar10_hifi4_neutron_cm33_core0.elf
+
 
 # ---- 入库的例外 (库入库决策: 预编译库 + 内嵌镜像 bin 要提交) ----
 # *.a (libtflm/libNeutron*/libnaturedsp) 和 *.bin (dsp_*_release.bin 等) 不在上面排除列表,

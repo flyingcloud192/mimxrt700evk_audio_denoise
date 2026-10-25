@@ -1,5 +1,8 @@
 # step2_denoise_skeleton
 
+> **开发进展与踩坑记录**：见 [`DEVLOG.md`](DEVLOG.md)（面向所有读者/AI 工具的详细开发日志，
+> 含环境需求、核心代码改动、已知坑点、下一步行动项。新机器/新协作者请先读它）。
+
 **RT700 (MIMXRT798S / mimxrt700evk) 语音降噪 —— CPU + DSP + NPU 三核协同端到端骨架**
 
 一个**完整、独立、自洽**的工程（结构对标 NXP `dsp_mu_polling`）：自带 CM33 与 HiFi4 的全部源码与预编译库，
